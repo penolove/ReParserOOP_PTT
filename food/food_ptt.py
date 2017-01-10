@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from lib.parse_class import FoodMenuParser
 from lib.parse_class import FoodArticleParser
 from lib.DBconn import FoodDBconn 

@@ -15,7 +15,6 @@ class Parser(object):
 
 
 class GossipParser(Parser):
-
     """add interface to pass cookie and filter for MenuParser"""
     def __init__(self):
         super(GossipParser, self).__init__()

@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from lib.menu_parser import GossipMenuParser
 
 ww=GossipMenuParser()
