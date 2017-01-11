@@ -16,11 +16,12 @@
 #=== create connection with sqlite : function of RSQLite ===
 library("RSQLite")
 drv <- dbDriver("SQLite")
-setwd('/home/stream/Documents/kerkerman88')
-con <- dbConnect(drv, "starbucks.sqlite")
+con <- dbConnect(drv, "/home/stream/Documents/kerkerman88/starbucks.sqlite")
 
-x=readLines("ptt/datetemp.txt")
+x=readLines("datetemp.txt")
 datekey=paste('"',x[1],'"',sep="") # create \"date\" this kind string
+cat(datekey)
+cat("\n")
 dates_Selected_query=paste("SELECT ROWID FROM webarticle WHERE date=",datekey,sep = "")
 
 #excute query by function of RSQLite 
@@ -29,8 +30,16 @@ dates_Selected <- dbGetQuery(conn=con, dates_Selected_query)
 
 count=0
 
-for (Rowkey in c(dates_Selected$rowid)){
 
+cat("Today's article : ")
+cat(length(dates_Selected$rowid))
+cat("\n")
+
+
+for (Rowkey in c(dates_Selected$rowid)){
+  cat("current Row is : ")
+  cat(Rowkey)
+  cat("\n")
   count=count+1
   row_pushes_query=paste("SELECT  * FROM webptt WHERE articlekey=",Rowkey,sep = "")
   row_article_query=paste("SELECT  * FROM webarticle WHERE ROWID=",Rowkey,sep = "")

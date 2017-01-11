@@ -166,7 +166,7 @@ class FoodArticleParser(ArticleParser):
 
 import time
 years=time.strftime("%Y")
-
+from datetime import datetime
 class GossipArticleParser(GossipParser,ArticleParser):
     def __init__(self,url,push_score):
         super(GossipArticleParser, self).__init__()
@@ -180,7 +180,25 @@ class GossipArticleParser(GossipParser,ArticleParser):
         a=super(GossipArticleParser, self).get_article_tuple()
         #"""return [title,Date,Author,Context,url]"""
         url=a[4].replace('https://www.ptt.cc','')
-        return [self.push_score,a[1],a[2],a[0],a[3],url,0,0,0]
+
+        def date_transform(x):
+            date_list=x.split(' ')
+            date_list=[i for i in date_list if i !='']
+            date_str=date_list[1]+'/'+date_list[2]+'/'+date_list[4]
+            date_object = datetime.strptime(date_str, '%b/%d/%Y')
+            #re-configure_format
+            date_str=date_object.strftime('%Y/%m/%d')
+            date_list=date_str.split('/')
+            if(int(date_list[1])<10):
+                date_str=date_list[0]+'/ '+str(int(date_list[1]))+'/'+date_list[2]
+                print date_str
+                return date_str
+            else:
+                print date_list[1]
+                print date_str
+                return date_str
+        return [self.push_score,date_transform(a[1]),a[2],a[0],a[3],url,0,0,0]
+
     def webptt_tuple(self):
         """return [(pushtag,userid,pcontext,pdate,articlekey)....]"""
         def reshpae_date(a):
