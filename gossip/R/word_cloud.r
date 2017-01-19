@@ -1,3 +1,4 @@
+cat("=========Now runing WordCloud in R================\n")
 
 # library("RSQLite")
 # library('tau')
@@ -75,7 +76,10 @@ for (Rowkey in c(dates_Selected$rowid)){
     # conver to Simple Chinese
   	push_words[i]=ccst[push_words[i]]
     # segments scentence to words and paste back by ", "
-  	push_words[i]=paste(mixseg<=push_words[i],collapse=", ")
+	if(nchar(push_words[i])>1){
+		#prevents only one word
+	  	push_words[i]=paste(mixseg<=push_words[i],collapse=", ")
+	}
     # conver it back to Traditional Chinese
   	push_words[i]=ccts[push_words[i]]
   }
@@ -104,7 +108,8 @@ for (Rowkey in c(dates_Selected$rowid)){
 
   library(wordcloud)
   pal2 <- brewer.pal(8,"Dark2")
-  setwd('/home/stream/')
+  #setwd('/home/stream/')
+  setwd('/home/stream/Documents/minimum_django/pttWeb/static/worldcloud/')
   png(paste(article_date,'_',count,".png",sep = ""))
 
   par(fig=c(0,1,0.1,0.9))

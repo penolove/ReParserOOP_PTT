@@ -11,33 +11,42 @@ import googlemaps
 class ArticleParser(Parser):
     """the __init__ should be implement in specific class (Food,Gossip)"""
     def get_article_tuple(self):
-        """return [title,Date,Author,Context,url]"""
-        count=0
-        a=[];
-        for i in self.soup.select('.article-metaline'):
+        """return list with len 5
+        [title,Date,Author,Context,url]"""
+        try:
             count=0
-            if(count==0):
-                a.append(i.select('.article-meta-value')[0].text.split('(')[0].strip())
-            else:
-                a.append(i.select('.article-meta-value')[0].text.strip())
-            count=count+1
-        #way to get main context
-        elem_lists=main_context=self.soup.select('#main-content')[0].contents
-        #filter the not realtive elements(e.g. spans)
-        fil_elem_list=[ i for i in elem_lists if isinstance(i,bs4.element.NavigableString)]
-        main_context = ''.join(fil_elem_list)
-        if(len(a)<3):
-            a=['','','']
-        return [a[1],a[2],a[0],main_context,self.url]
+            a=[];
+            for i in self.soup.select('.article-metaline'):
+                count=0
+                if(count==0):
+                    a.append(i.select('.article-meta-value')[0].text.split('(')[0].strip())
+                else:
+                    a.append(i.select('.article-meta-value')[0].text.strip())
+                count=count+1
+            #way to get main context
+            elem_lists=main_context=self.soup.select('#main-content')[0].contents
+            #filter the not realtive elements(e.g. spans)
+            fil_elem_list=[ i for i in elem_lists if isinstance(i,bs4.element.NavigableString)]
+            main_context = ''.join(fil_elem_list)
+            if(len(a)<3):
+                a=['','','']
+            return [a[1],a[2],a[0],main_context,self.url]
+        except IndexError:
+            #if parse fail return len=0
+            return []
     
     def get_push_tuple(self):
         """return push tags (url,userid,push-tag,push-content)..."""
-        pushs=self.soup.select('.push')
-        pushset=[(self.url ,\
-          i.select('.push-userid')[0].text, \
-          i.select('.push-tag')[0].text, \
-          i.select('.push-content')[0].text[2:]) for i in pushs ]
-        return pushset
+        try:
+            pushs=self.soup.select('.push')
+            pushset=[(self.url ,\
+              i.select('.push-userid')[0].text, \
+              i.select('.push-tag')[0].text, \
+              i.select('.push-content')[0].text[2:]) for i in pushs ]
+            return pushset
+        except IndexError:
+            #if parse fail return len=0
+            return []
     
     def prepare_query_tuples(self):
         print "this function should be implement by subclass"
@@ -138,6 +147,9 @@ class FoodArticleParser(ArticleParser):
     
     def get_article_tuple(self):
         a=super(FoodArticleParser,self).get_article_tuple()
+        if len(a)==0:
+            print "get_article_tuple format error, FoodArticleParser " 
+            return []
         return [str(self.lat)+","+str(self.lon),a[0],a[1],a[2],a[3],a[4]]
 
     
@@ -154,12 +166,17 @@ class FoodArticleParser(ArticleParser):
             QT_tuple.append( [store_table_q, [self.get_store_tuple()], "Sent to Store Table"])
             
             #article
-            art_table_q="""INSERT INTO ArticleTable(latlon,title,Date,Author,Context,url) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (url) DO NOTHING"""
-            QT_tuple.append([art_table_q, [self.get_article_tuple()], "sent to ArticleTable"])
+            _article_tuple=self.get_article_tuple()
+            if(len(_article_tuple)>0):
+                art_table_q="""INSERT INTO ArticleTable(latlon,title,Date,Author,Context,url) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (url) DO NOTHING"""
+                QT_tuple.append([art_table_q, [_article_tuple], "sent to ArticleTable"])
             
             #pushTable
-            art_table_q="""INSERT INTO PushTable(url,userid,pushtag,pushcontext) VALUES (%s,%s,%s,%s) ON CONFLICT DO NOTHING"""
-            QT_tuple.append([art_table_q, self.get_push_tuple(),"sent to Pushtable"])
+            _push_tuple=self.get_push_tuple()
+            if len(_push_tuple)>0:
+                art_table_q="""INSERT INTO PushTable(url,userid,pushtag,pushcontext) VALUES (%s,%s,%s,%s) ON CONFLICT DO NOTHING"""
+                QT_tuple.append([art_table_q, _push_tuple,"sent to Pushtable"])
+
         return QT_tuple
 
 
@@ -175,10 +192,13 @@ class GossipArticleParser(GossipParser,ArticleParser):
         self.soup=BeautifulSoup(res.text)
         self.push_score=push_score
     def webarticle_tuple(self):
-        """return [pushcount,date,author,title,context,hyperlink,green,blue,fe]"""
-
+        """return list with len 9 
+        [pushcount,date,author,title,context,hyperlink,green,blue,fe]"""
         a=super(GossipArticleParser, self).get_article_tuple()
-        #"""return [title,Date,Author,Context,url]"""
+        #""" it should return [title,Date,Author,Context,url]"""
+        if len(a)==0:
+            #if parent cls:ArticleParserparse fail return [] len=0
+            return []
         url=a[4].replace('https://www.ptt.cc','')
 
         def date_transform(x):
@@ -197,18 +217,27 @@ class GossipArticleParser(GossipParser,ArticleParser):
                 print date_list[1]
                 print date_str
                 return date_str
-        return [self.push_score,date_transform(a[1]),a[2],a[0],a[3],url,0,0,0]
+
+
+        try:
+            date_tuple=date_transform(a[1])
+        except IndexError:
+            #if parse fail return len=0
+            return []
+        return [self.push_score,date_tuple,a[2],a[0],a[3],url,0,0,0]
 
     def webptt_tuple(self):
         """return [(pushtag,userid,pcontext,pdate,articlekey)....]"""
         def reshpae_date(a):
             return (a[0][2],a[0][1],a[0][3],a[1])
         a=super(GossipArticleParser, self).get_push_tuple()
-        pushs=self.soup.select('.push')
-        pushdate=[years+"/"+i.select('.push-ipdatetime')[0].text for i in pushs]
-        a=zip(a,pushdate)
-        a=[reshpae_date(i) for i in a]
-        #"""return push tags (url,userid,push-tag,push-content)..."""
+        if len(a)>0:
+            pushs=self.soup.select('.push')
+            pushdate=[years+"/"+i.select('.push-ipdatetime')[0].text for i in pushs]
+            a=zip(a,pushdate)
+            a=[reshpae_date(i) for i in a]
+            #"""return push tags (url,userid,push-tag,push-content)..."""
+        # if parsen fail also pass a (which is []) out
         return a
     
     def prepare_query_tuples(self):

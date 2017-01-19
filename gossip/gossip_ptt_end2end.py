@@ -1,11 +1,13 @@
 import sys
 sys.path.append('..')
+sys.path.append('/home/stream/Documents/ptt_web_oop')
 from lib.menu_parser import GossipMenuParser
 from lib.article_parser import GossipArticleParser 
 from lib.DBconn import Gossipconn
 
 import time
 
+print "kerker"
 
 # get current date
 today1=time.strftime("%m/%d")
@@ -37,9 +39,11 @@ while (today in gMP.get_date_list()):
         gAP=GossipArticleParser(url,ps)
         parserObjects.append(gAP.prepare_query_tuples())
     for i in parserObjects:
-        if i[0][1]==check_today:
-            print "day_checked"
+        if len(i[0])==9 and len(i[1])!=0 and i[0][1]==check_today:
+            print "day_checked, format checked : pass."
             GossDB.submit(i)
+        else:
+            print "date_check/format check : fail"
     gMP.clean_push_score()
     print j
     j-=1

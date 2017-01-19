@@ -1,5 +1,6 @@
 import sys
 sys.path.append('..')
+sys.path.append('/home/stream/Documents/ptt_web_oop')
 from lib.menu_parser import FoodMenuParser
 from lib.article_parser import FoodArticleParser
 from lib.DBconn import FoodDBconn 
@@ -13,7 +14,8 @@ res=requests.get('https://www.ptt.cc/bbs/Food/index.html')
 soup=BeautifulSoup(res.text)
 q=soup.select('.wide')[1]['href'].split('/')[3].split('.')[0]
 if('index' in soup.select('.wide')[1]['href'].split('/')[3].split('.')[0]):
-  newest=q.replace('index','')
+    newest=q.replace('index','')
+    print "newest index is : "+str(newest)
 else:
     print "cant't get index.html of food board"
     os._exit(1)
@@ -27,16 +29,15 @@ f.close()
 menuParser=FoodMenuParser()
 parserSubmit=FoodDBconn()
 count=21000
+curr_record=0
 for j in range(current_idx,int(newest)+2):
     if(count<0):
         break
     print "=========================nextpage===================="
     parserSubmit.connect()
-
     parserObjects=[]
     menuParser.parse_url('https://www.ptt.cc/bbs/Food/index'+str(j)+'.html')
     urlist=menuParser.get_url_list()
-
     #MenuParser.get_url_list()
     for i in urlist:
         try:
@@ -44,17 +45,16 @@ for j in range(current_idx,int(newest)+2):
             parserObjects.append(fAP.prepare_query_tuples())
         except:
             pass
-        
     for i in parserObjects:
         parserSubmit.submit(i)
         count=count-1
         if(count<0):
             break
-            
+    curr_record=j
     parserSubmit.close()
-    
-print "the_current_index_is "+str(j)
 
+
+print "the_current_index_is "+str(curr_record)
 f = open('food_current_index.txt','w')
-f.write(str(j)+'\n')
+f.write(str(curr_record)+'\n')
 f.close()
