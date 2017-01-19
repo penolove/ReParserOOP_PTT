@@ -52,7 +52,7 @@ class Gossipconn(Abs_DBconn):
                         print "the format for push_tuples are wrong"
                 self.conn.commit()
         else:
-            print "there are some issue, tuples_len : "+str(len(query_tuples_info[0]))+", push_tuple_len : "+str(len(query_tuples_info[1]))
+            print "there are parse issue, tuples_len : "+str(len(query_tuples_info[0]))+", push_tuple_len : "+str(len(query_tuples_info[1]))
     def connect(self):
         self.conn = sqlite3.connect('/home/stream/Documents/kerkerman88/starbucks.sqlite')  #link
         self.curs = self.conn.cursor() 

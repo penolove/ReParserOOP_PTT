@@ -43,7 +43,9 @@ while (today in gMP.get_date_list()):
             print "day_checked, format checked : pass."
             GossDB.submit(i)
         else:
-            print "date_check/format check : fail"
+            print "date_check/format check : fail, article_len(9): "+str(len(i[0]))+", push_len(>0): "+\
+                    str(len(i[1]))+ ", date_check: "+check_today
+
     gMP.clean_push_score()
     print j
     j-=1

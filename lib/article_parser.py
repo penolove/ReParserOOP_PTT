@@ -33,6 +33,7 @@ class ArticleParser(Parser):
             return [a[1],a[2],a[0],main_context,self.url]
         except IndexError:
             #if parse fail return len=0
+            print "ArticleParser->get_article_tuple format error" 
             return []
     
     def get_push_tuple(self):
@@ -46,6 +47,7 @@ class ArticleParser(Parser):
             return pushset
         except IndexError:
             #if parse fail return len=0
+            print "ArticleParser->get_push_tuple format error" 
             return []
     
     def prepare_query_tuples(self):
@@ -148,7 +150,7 @@ class FoodArticleParser(ArticleParser):
     def get_article_tuple(self):
         a=super(FoodArticleParser,self).get_article_tuple()
         if len(a)==0:
-            print "get_article_tuple format error, FoodArticleParser " 
+            print "FoodArticleParser->get_article_tuple format error" 
             return []
         return [str(self.lat)+","+str(self.lon),a[0],a[1],a[2],a[3],a[4]]
 
@@ -198,6 +200,7 @@ class GossipArticleParser(GossipParser,ArticleParser):
         #""" it should return [title,Date,Author,Context,url]"""
         if len(a)==0:
             #if parent cls:ArticleParserparse fail return [] len=0
+            print "GossipArticleParser->webarticle_tuple article parse fail"
             return []
         url=a[4].replace('https://www.ptt.cc','')
 
@@ -223,6 +226,7 @@ class GossipArticleParser(GossipParser,ArticleParser):
             date_tuple=date_transform(a[1])
         except IndexError:
             #if parse fail return len=0
+            print "GossipArticleParser->webarticle_tuple article parse fail"
             return []
         return [self.push_score,date_tuple,a[2],a[0],a[3],url,0,0,0]
 
@@ -237,6 +241,8 @@ class GossipArticleParser(GossipParser,ArticleParser):
             a=zip(a,pushdate)
             a=[reshpae_date(i) for i in a]
             #"""return push tags (url,userid,push-tag,push-content)..."""
+        else:
+            print "GossipArticleParser->webptt_tuple pushes  parse fail"
         # if parsen fail also pass a (which is []) out
         return a
     
