@@ -21,8 +21,6 @@ R word_cloud in in gossip/R
 Rscript word_cloud.r
 ```
 
+UML links:
+![alt tag](https://i.imgur.com/Uw8M57F.png)
 
-
-
-# ReParserOOP_PTT
-# ReParserOOP_PTT

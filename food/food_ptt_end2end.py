@@ -29,7 +29,7 @@ f.close()
 menuParser=FoodMenuParser()
 parserSubmit=FoodDBconn()
 count=21000
-curr_record=curr_idx
+curr_record=current_idx
 for j in range(current_idx,int(newest)+2):
     if(count<0):
         break
