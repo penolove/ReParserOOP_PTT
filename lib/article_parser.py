@@ -160,7 +160,6 @@ class FoodArticleParser(ArticleParser):
         # store
         if(self.lat!=181):
             print self.address
-
             if(self.name==""):
                 store_table_q="""INSERT INTO StoreTable(address,latlon,count) VALUES (%s,%s,%s) ON CONFLICT (latlon) DO UPDATE SET count=StoreTable.count+1"""
             else:
