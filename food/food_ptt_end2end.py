@@ -12,7 +12,11 @@ import datetime
 
 def ptt_date_parser(ptt_date):
     date_list = ptt_date.split(' ')
-    date = date_list[4]+'-'+date_list[1]+'-'+date_list[2]
+    if(len(date_list)==5):
+        date = date_list[4]+'-'+date_list[1]+'-'+date_list[2]
+    if(len(date_list)==6):
+        date = date_list[5]+'-'+date_list[1]+'-'+date_list[3]
+    print date
     return datetime.datetime.strptime(date, "%Y-%b-%d")
 
 
@@ -43,7 +47,7 @@ latest_list = [ptt_date_parser(i[0]) for i in latest_list]
 latest= max(latest_list)
 current=latest
 parserSubmit.close()
-print "print latest date is : "+ latest.strftime("%Y-%m-%d")
+print "print latest date in DB is : "+ latest.strftime("%Y-%m-%d")
 
 count=5000
 #curr_record=current_idx
@@ -75,7 +79,7 @@ while True:
     #curr_record=j
     parserSubmit.close()
     print "current page is : "+'https://www.ptt.cc/bbs/Food/index'+str(j)+'.html'
-    print "print current date is : "+ current.strftime("%Y-%m-%d")
+    print "print current page date is : "+ current.strftime("%Y-%m-%d")
     if current<latest:
         break
     j-=1
