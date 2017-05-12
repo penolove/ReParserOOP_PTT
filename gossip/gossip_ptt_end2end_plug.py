@@ -13,7 +13,7 @@ import time
 " 1/10"
 "10/15"
 "12/13"
-today=" 3/21"
+today=" 5/11"
 years="2017"
 
 print "current parsing"+ today
@@ -28,8 +28,8 @@ GossDB.connect()
  
 gMP=GossipMenuParser()
 #here need to change the url to the date you want
-gMP.parse_url("https://www.ptt.cc/bbs/Gossiping/index21042.html")
-j=21042
+gMP.parse_url("https://www.ptt.cc/bbs/Gossiping/index23093.html")
+j=23093
 
 while (today in gMP.get_date_list()):
     parserObjects=[]
@@ -39,9 +39,13 @@ while (today in gMP.get_date_list()):
         gAP=GossipArticleParser(url,ps)
         parserObjects.append(gAP.prepare_query_tuples())
     for i in parserObjects:
-        if i[0][1]==check_today:
-            print "day_checked"
-            GossDB.submit(i)
+        try:
+            if i[0][1]==check_today:
+                print "day_checked"
+                GossDB.submit(i)
+        except:
+            pass
+            print "error "+str(IOError)
     gMP.clean_push_score()
     print j
     j-=1
