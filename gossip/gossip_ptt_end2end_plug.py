@@ -13,8 +13,9 @@ import time
 " 1/10"
 "10/15"
 "12/13"
-today=" 5/11"
+today=" 7/05"
 years="2017"
+# get current date should be look like
 
 print "current parsing"+ today
 check_today=years+'/'+today
@@ -27,9 +28,10 @@ GossDB.connect()
 
  
 gMP=GossipMenuParser()
-#here need to change the url to the date you want
-gMP.parse_url("https://www.ptt.cc/bbs/Gossiping/index23093.html")
-j=23093
+#====here need to change the url to the date you want===#
+j=25416
+gMP.parse_url("https://www.ptt.cc/bbs/Gossiping/index"+str(j)+".html")
+#====here need to change the url to the date you want===#
 
 while (today in gMP.get_date_list()):
     parserObjects=[]

@@ -12,7 +12,7 @@ formatweek=as.Date(dateweek,"%Y/ %m/%d")
 daydiff=formatnow-formatweek
 
 bool7=daydiff==7
-
+print(daydiff)
 
 if(bool7){
   
@@ -23,11 +23,11 @@ if(bool7){
 
   library("RSQLite")
   library('tau')
-  require(rJava)
+  #require(rJava)
   library(tm)
   library(wordcloud)
   drv <- dbDriver("SQLite")
-  con <- dbConnect(drv, "/home/stream/Documents/kerkerman88/starbucks.sqlite")
+  con <- dbConnect(drv, "/home/stream/Documents/minimum_django/pttWeb/starbucks.sqlite")
   
   date_now_query=paste('"',date_now,'"',sep="")
   

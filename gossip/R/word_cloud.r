@@ -1,3 +1,7 @@
+library(showtext)
+showtext.auto(enable = TRUE)
+font.add("heiti", "/home/stream/Documents/ptt_web_oop/gossip/R/LiHei-Pro.ttf")
+
 cat("=========Now runing WordCloud in R================\n")
 
 # library("RSQLite")
@@ -16,9 +20,9 @@ cat("=========Now runing WordCloud in R================\n")
 
 #=== create connection with sqlite : function of RSQLite ===
 library("RSQLite")
-drv <- dbDriver("SQLite")
-con <- dbConnect(drv, "/home/stream/Documents/kerkerman88/starbucks.sqlite")
 
+drv <- dbDriver("SQLite")
+con <- dbConnect(drv, "/home/stream/Documents/minimum_django/pttWeb/starbucks.sqlite")
 x=readLines("datetemp.txt")
 datekey=paste('"',x[1],'"',sep="") # create \"date\" this kind string
 cat(datekey)
@@ -113,12 +117,15 @@ for (Rowkey in c(dates_Selected$rowid)){
   png(paste(article_date,'_',count,".png",sep = ""))
 
   par(fig=c(0,1,0.1,0.9))
+
   wordcloud(term_frequency_matrix$word,term_frequency_matrix$freq,
             scale=c(4,2), min.freq=2,max.words=100, random.order=FALSE,
-            rot.per=.15, colors=pal2)
+            rot.per=.15, colors=pal2,family="heiti")
+
   par(fig=c(0,1,0,1))
+  print(article_title)
   title(main=article_title,sub=article_push_score,cex.main = 1.5,
-        cex.sub = 3,col.main="red",col.sub="red",ylab=article_date)
+        cex.sub = 3,col.main="red",col.sub="red",ylab=article_date,famiy="heiti")
   dev.off( )
 }
 
